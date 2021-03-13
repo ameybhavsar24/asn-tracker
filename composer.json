@@ -1,0 +1,7 @@
+{
+    "name": "amey/asn",
+    "description": "A assignment tracker website",
+    "type": "project",
+    "license": "ISC",
+    "require": {}
+}
