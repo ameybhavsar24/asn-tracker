@@ -1,0 +1,15 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.nav-link {
+  transition:background-color 300ms;
+}
+
+.nav-link:hover {
+  background-color:rgb(218, 218, 218);
+}

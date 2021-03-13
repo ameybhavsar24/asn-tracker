@@ -1,0 +1,11 @@
+// Styling related to the whole HTML go heres
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+html {
+  scroll-behavior: smooth;
+}

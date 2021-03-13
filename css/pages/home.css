@@ -1,0 +1,188 @@
+// Home page styling goes here
+
+.jumbotron
+  {
+    margin-top: 50px;
+    text-align: justify;
+  }
+
+.btn-lg {
+  margin: 2px;
+}
+
+.home-page-headings {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 60px;
+  text-align: center;
+}
+
+.features {
+  display: flex;
+  padding: 30px;
+  width: 100%;
+  text-align: justify;
+}
+
+.feature-n {
+  flex: 33%;
+  padding: 30px;
+  width: 100%;
+}
+
+.feature-img {
+  width: 100%;
+  height: auto;
+}
+
+.feature-img img {
+  width: 100%;
+  height: auto;
+}
+
+.feature-desc {
+  padding: 10px;
+  width: 100%;
+  background-color: #f8f9fa;
+}
+
+.feature-desc h4 {
+  color: #007bff;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.feature-desc p {
+  color: rgb(122,122,122);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.account-lr {
+  color: rgb(141, 141, 141);
+  font-family: cursive;
+  text-align: center;
+}
+
+.account-lr a {
+  color: #007bff;
+  font-size: 25px;
+  text-decoration: none;
+}
+
+.account-lr a:hover {
+  text-decoration: underline;
+}
+
+.contact_us {
+	margin-left:20%;
+	width:60%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+	.contact-us-inp-type-text, .contact-us-inp-type-email {
+		margin-left:20%;
+		width:60%;
+		color:rgb(56, 56, 56);
+		font-size:16px;
+		font-family:segoe ui;
+		outline:none;
+		border:none;
+		border-bottom:2px solid #ccc;
+		transition:all 250ms;
+	}
+		.contact-us-inp-type-text:focus, .contact-us-inp-type-email:focus {
+			border-bottom:2px solid #007bff;
+		}
+  .contact-us-inp-type-textarea {
+		margin-left:20%;
+		padding:5px;
+		width:60%;
+		color:rgb(56, 56, 56);
+		font-size:16px;
+		font-family:segoe ui;
+		text-align:justify;
+		resize:vertical;
+		outline:none;
+		border:2px solid #ccc;
+		transition:all 250ms;
+	}
+		.contact-us-inp-type-textarea:focus {
+			border:2px solid #007bff;
+		}
+  .contact-us-inp-type-submit {
+		margin-left:40%;
+		padding:10px;
+		width:20%;
+		background-color:#f5f5f5;
+		color:#007bff;
+		font-weight:bold;
+		font-size:16px;
+		font-family:segoe ui;
+		cursor:pointer;
+		outline:none;
+		border:none;
+		tap-highlight-color:transparent;
+		-webkit-tap-highlight-color:transparent;
+		-moz-tap-highlight-color:transparent;
+		-o-tap-highlight-color:transparent;
+		transition:all 250ms;
+	}
+		.contact-us-inp-type-submit:hover {
+			background-color:#007bff;
+			color:#fff;
+		}
+
+@media only screen and (max-width:25cm)
+{
+.home-page-headings {
+  font-size: 50px;
+}
+
+.features {
+  flex-wrap: wrap;
+}
+  
+.feature-n {
+  flex: 100%;
+  display: flex;
+}
+  
+.feature-img, .feature-desc {
+  flex: 50%;
+}
+
+.contact_me, .contact-us-inp-type-text, .contact-us-inp-type-email, .contact-us-inp-type-textarea {
+	margin-left:10%;
+	width:80%;
+}
+}
+
+@media only screen and (max-width:15cm)
+{
+.home-page-headings {
+  font-size: 40px;
+}
+
+.features {
+  padding: 20px;
+}
+  
+.feature-n {
+  flex-wrap: wrap;
+  padding: 20px;
+}
+  
+.feature-img, .feature-desc {
+  flex: 100%;
+}
+  
+.feature-desc {
+  padding: 5px;
+}
+
+.contact_me, .contact-us-inp-type-text, .contact-us-inp-type-email, .contact-us-inp-type-textarea {
+	margin-left:5%;
+	width:90%;
+}
+  .contact-us-inp-type-submit {
+    margin-left: 30%;
+    width: 40%;
+  }
+}
