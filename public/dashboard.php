@@ -1,3 +1,11 @@
+<?php
+  session_start();
+  // Check if user is already logged in
+  if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] === false) {
+    header("location: login.php");
+    exit;
+  }
+?>
 <!doctype html>
 
 <html lang="en">
@@ -20,6 +28,11 @@
     <div class="row">
       <div class="col-12 mx-auto my-5">
         <h1>Dashboard</h1>
+        <?php
+          echo '<pre>';
+          var_dump($_SESSION);
+          echo '</pre>';
+        ?>
       </div>
     </div>
   </div>
