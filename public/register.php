@@ -1,3 +1,91 @@
+<?php
+  require_once("../db.php");
+
+  $name = $email = $password = $confirm_password = "";
+  $name_err = $email_err = $password_err = $confirm_password_err = "";
+  $check_errors = true;
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // validate email
+    if (empty(trim($_POST["email"]))) {
+      $email_err = "Please enter a email.";
+    } else {
+      // prepare a select statement
+      $sql = "SELECT id FROM users WHERE email = ?";
+      if ($stmt = $mysqli->prepare($sql)) {
+        // bind variables to prepared statement as parameters
+        $param_email = trim($_POST["email"]);
+        $stmt->bind_param("s", $param_email);
+
+        // attempt to execute the prepared statement
+        if ($stmt->execute()) {
+          // store result
+          $stmt->store_result();
+          if ($stmt->num_rows == 1) {
+            
+            $email_err = "This email already exists";
+          } else {
+            $email = $mysqli->real_escape_string(trim($_POST["email"]));
+          }
+        } else {
+          echo "<script>alert('Oops! Something went wrong. Please try again later.')</script>";
+        }
+
+       $stmt->close();
+
+      }
+    }
+
+    // validate name
+    if (empty(trim($_POST["name"]))) {
+      $name_err = "Please enter your name.";
+    } else {
+      $name = $mysqli->real_escape_string(trim($_POST["name"]));
+    }
+
+    // validate password
+    if (empty(trim($_POST["password"]))) {
+      $password_err = "Please enter a password.";
+    } else if (strlen(trim($_POST["password"])) < 6) {
+      $password_err = "Password must have atleast 6 characters.";
+    } else {
+      $password = $mysqli->real_escape_string(trim($_POST["password"]));
+    }
+
+    // validate confirm password
+    if (empty(trim($_POST["confirm_password"]))) {
+      $confirm_password_err = "Please confirm your password.";
+    } else {
+      $confirm_password = $mysqli->real_escape_string(trim($_POST["confirm_password"]));
+      if (empty($password_err) && ($password != $confirm_password)) {
+        $confirm_password_err = "Passwords did not match.";
+      }
+    }
+
+    $check_errors = empty($email_err) && empty($password_err) && empty($name_err) && empty($confirm_password_err);
+
+    if ($check_errors) {
+      // insert new user to database
+      $sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+      if ($stmt = $mysqli->prepare($sql)) {
+        // bind variables to prepared statement as parameters
+        $param_name = $name;
+        $param_email = $email;
+        $param_password = password_hash($password, PASSWORD_DEFAULT);
+        $stmt->bind_param("sss", $param_name, $param_email, $param_password);
+
+        // Attempt to exectute the prepared statement
+        if ($stmt->execute()) {          
+          header("location: login.php");
+        } else {
+          echo "<script>alert('Oops! Something went wrong. Please try again later.')</script>";
+        }
+        $stmt->close();
+      }
+    }
+    $mysqli->close();
+  }
+?>
+
 <!doctype html>
 
 <html lang="en">
@@ -13,7 +101,7 @@
 
 
   <?php
-    include ('nav.php');
+    // include ('nav.php');
   ?>
 
   <div class="container">
@@ -25,24 +113,41 @@
           </div>
           <div class="card-body">
             <h5 class="card-title text-center">Sign Up</h5>
-              <form class="form-form">
+              <form class="form-form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+
+                <?php 
+                  if (!$check_errors) {
+                    ?>
+                    <div class="alert alert-danger" role="alert">
+                      <!-- Form errors here -->
+                      <?php 
+                        if ($name_err) echo "<p>".$name_err."</p>";
+                        if ($email_err) echo "<p>".$email_err."</p>";
+                        if ($password_err) echo "<p>".$password_err."</p>";
+                        if ($confirm_password_err) echo "<p>".$confirm_password_err."</p>";
+                      ?>
+                    </div>
+                    <?php
+                  }
+                ?>
+
                 <div class="form-label-group">
-                  <input type="text" id="inputUserame" class="form-control" placeholder="Username" required autofocus>
-                  <label for="inputUserame">Username</label>
+                  <input name="name" type="text" id="inputUserame" class="form-control" placeholder="Name" required autofocus>
+                  <label for="inputUserame">Name</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
+                  <input name="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
                   <label for="inputEmail">Email address</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                  <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
                   <label for="inputPassword">Password</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input type="password" id="inputConfirmPassword" class="form-control" placeholder="Password" required>
+                  <input name="confirm_password" type="password" id="inputConfirmPassword" class="form-control" placeholder="Password" required>
                   <label for="inputConfirmPassword">Confirm password</label>
                 </div>
 
