@@ -19,9 +19,11 @@
     include ('nav-dashboard.php');
   ?>
 
+  <h3 class="enrolled-created-courses-headings">Enrolled Courses:</h3>
+
   <div class="courses-cnt">
     <div class="courses">
-      <a href="view-course-joined.php">
+      <a href="view-course-enrolled.php">
         <div class="courses-head">
           <h4>Course Name</h4>
           Course Create Name
@@ -33,7 +35,7 @@
     </div>
     
     <div class="courses">
-      <a href="view-course-joined.php">
+      <a href="view-course-enrolled.php">
         <div class="courses-head">
           <h4>Course Name</h4>
           Course Creater Name
@@ -45,10 +47,37 @@
     </div>
     
     <div class="courses">
-      <a href="view-course-joined.php">
+      <a href="view-course-enrolled.php">
         <div class="courses-head">
           <h4>Course Name</h4>
-          Deepali Bhole
+          Course Create Name
+        </div>
+        <div class="courses-desc">
+          Assigned Works
+        </div>
+      </a>
+    </div>
+    
+    <div class="courses">
+      <a href="view-course-enrolled.php">
+        <div class="courses-head">
+          <h4>Course Name</h4>
+          Course Create Name
+        </div>
+        <div class="courses-desc">
+          Assigned Works
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <h3 class="enrolled-created-courses-headings">Created Courses:</h3>
+
+  <div class="courses-cnt">
+    <div class="courses">
+      <a href="view-course-created.php">
+        <div class="courses-head">
+          <h4>Course Name</h4>
         </div>
         <div class="courses-desc">
           Assigned Works
@@ -60,7 +89,28 @@
       <a href="view-course-created.php">
         <div class="courses-head">
           <h4>Course Name</h4>
-          You
+        </div>
+        <div class="courses-desc">
+          Assigned Works
+        </div>
+      </a>
+    </div>
+    
+    <div class="courses">
+      <a href="view-course-created.php">
+        <div class="courses-head">
+          <h4>Course Name</h4>
+        </div>
+        <div class="courses-desc">
+          Assigned Works
+        </div>
+      </a>
+    </div>
+    
+    <div class="courses">
+      <a href="view-course-created.php">
+        <div class="courses-head">
+          <h4>Course Name</h4>
         </div>
         <div class="courses-desc">
           Assigned Works

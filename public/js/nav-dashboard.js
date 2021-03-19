@@ -1,5 +1,5 @@
-function joincourse() {
-  alert("Join Course");
+function enrollcourse() {
+  alert("Enroll Course");
 }
 
 function createcourse() {

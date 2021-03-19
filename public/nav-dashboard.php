@@ -19,7 +19,7 @@
         <a class="nav-link" href="index.php">Home<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="" onclick="joincourse()">Join Course<span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="" onclick="enrollcourse()">Enroll Course<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
         <a class="nav-link" href="" onclick="createcourse()">Create Course<span class="sr-only">(current)</span></a>
