@@ -1,26 +1,71 @@
 <!doctype html>
-
 <html lang="en">
 <head>
+
   <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
   <title>Assignment Tracker</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
-  <link rel="stylesheet" href="css/main.css" />
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"/>
+  <link rel="stylesheet" href="css/main.css"/>
+
+  <script src="js/nav-dashboard.js"></script>
+
 </head>
 
 <body>
-
-
   <?php
-    include ('nav.php');
+    include ('nav-dashboard.php');
   ?>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-12 mx-auto my-5">
-        <h1>Dashboard</h1>
-      </div>
+  <div class="courses-cnt">
+    <div class="courses">
+      <a href="view-course-joined.php">
+        <div class="courses-head">
+          <h4>Course Name</h4>
+          Course Create Name
+        </div>
+        <div class="courses-desc">
+          Assigned Works
+        </div>
+      </a>
+    </div>
+    
+    <div class="courses">
+      <a href="view-course-joined.php">
+        <div class="courses-head">
+          <h4>Course Name</h4>
+          Course Creater Name
+        </div>
+        <div class="courses-desc">
+          Assigned Works
+        </div>
+      </a>
+    </div>
+    
+    <div class="courses">
+      <a href="view-course-joined.php">
+        <div class="courses-head">
+          <h4>Course Name</h4>
+          Deepali Bhole
+        </div>
+        <div class="courses-desc">
+          Assigned Works
+        </div>
+      </a>
+    </div>
+    
+    <div class="courses">
+      <a href="view-course-created.php">
+        <div class="courses-head">
+          <h4>Course Name</h4>
+          You
+        </div>
+        <div class="courses-desc">
+          Assigned Works
+        </div>
+      </a>
     </div>
   </div>
 

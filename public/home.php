@@ -97,24 +97,26 @@
 </div>
 
 <br>
-<h1 class="home-page-headings" id="account">What are you waiting for !</h1>
+<h1 class="home-page-headings" id="account">What are you waiting for!</h1>
 <br>
 <h4 class="account-lr">Already have an account. <a href="login.php">Login here.</a></h4>
 <h4 class="account-lr">Don't have an account. <a href="register.php">Register here.</a></h4>
 
-<br><br>
-<h1 class="home-page-headings" id="contact-us">Contact Us</h1>
-
 <br>
-<form method="POST" action="#">
-  <div class="contact-us">
-    <input class="contact-us-inp-type-text" type="text" name="name" placeholder="Name" maxlength="100" required>
-      <br><br>
-    <input class="contact-us-inp-type-email" type="email" name="email" placeholder="Email Address" maxlength="200" required>
-    <br><br>
-    <textarea class="contact-us-inp-type-textarea" name="msg" placeholder="Message" maxlength="2000" rows="6" required></textarea>
-    <br><br>
-    <input class="contact-us-inp-type-submit" type="submit" name="submit" value="Submit">
-  </div>
-</form>
+<div class="contact">
+  <br><h1 class="home-page-headings" id="contact-us">Have Any Query?</h1><br>
 
+  <form action="http://localhost/Contact-Me/Contact-Me.php" target="frame" method="post">
+    <div class="contact-form">
+      <div class="name-email">
+        <input type="text" name="name" placeholder="Name*" maxlength="255" required>
+        <input type="email" name="email" placeholder="Email Address*" maxlength="255" required>
+      </div>
+      <div class="text-area">
+        <textarea name="msg" placeholder="Message*" maxlength="2000" rows="6" required></textarea>
+      </div>
+    </div>
+        <input type="submit" name="submit" value="Submit">
+  </form>
+</div>
+<br>
