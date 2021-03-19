@@ -1,3 +1,11 @@
+<?php
+  session_start();
+  // Check if user is already logged in
+  if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] === false) {
+    header("location: login.php");
+    exit;
+  }
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -18,9 +26,7 @@
   <?php
     include ('nav-dashboard.php');
   ?>
-
   <h3 class="enrolled-created-courses-headings">Enrolled Courses:</h3>
-
   <div class="courses-cnt">
     <div class="courses">
       <a href="view-course-enrolled.php">
