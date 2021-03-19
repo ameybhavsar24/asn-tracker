@@ -4,9 +4,72 @@
 
   // Check if user is already logged in, if yes redirect to dashboard
   if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
-    header("location: welcome.php");
+    header("location: dashboard.php");
     exit;
   }
+  require_once("../db.php");
+
+  $email = $password = "";
+  $email_err = $password_err = "";
+  $check_errors = true;
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (empty(trim($_POST["email"]))) {
+      $email_err = "Please enter your email.";
+    } else {
+      $email = $mysqli->real_escape_string($_POST["email"]);
+    }
+
+    if (empty(trim($_POST["password"]))) {
+      $password_err = "Please enter a password.";
+    } else {
+      $password = $mysqli->real_escape_string($_POST["password"]);
+    }
+
+
+    $check_errors = empty($email_err) && empty($password_err);
+    if ($check_errors) {
+      $sql = "SELECT id, name, email, password FROM users where email = ?";
+      if ($stmt = $mysqli->prepare($sql)) {
+        $param_email = $email;
+        $stmt->bind_param("s", $param_email);
+        if ($stmt->execute()) {
+          $stmt->store_result();
+          if ($stmt->num_rows == 1) {
+            $stmt->bind_result($id, $name, $email, $hashed_password);
+            if ($stmt->fetch()) {
+              if (password_verify($password, $hashed_password)) {
+                session_start();
+
+                $_SESSION["loggedin"] = true;
+                $_SESSION["id"] = $id;
+                $_SESSION["name"] = $name;
+                $_SESSION["email"] = $email;
+
+                header('location: dashboard.php');
+
+              } else {
+                $password_err = "The password you entered was incorrect.";
+              }
+            }
+          } else {
+            $email_err = "No such account exists.";
+          }
+        } else {
+          echo "<script>alert('Something went wrong! Try again later.')</script>";
+        }
+
+        $stmt->close();
+
+      }
+    }
+    $check_errors = empty($email_err) && empty($password_err);
+
+
+    $mysqli->close();
+
+  }
+
 ?>
 
 <!doctype html>
@@ -32,14 +95,29 @@
         <div class="card card-form my-5">
           <div class="card-body">
             <h5 class="card-title text-center">Sign In</h5>
-              <form class="form-form">
+              <form class="form-form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+
+              <?php
+                if (!$check_errors) {
+                  ?>
+                  <div class="alert alert-danger" role="alert">
+                    <!-- Form errors here -->
+                    <?php
+                      if (!empty($email_err)) echo "<p>".$email_err."</p>";
+                      if (!empty($password_err)) echo "<p>".$password_err."</p>";
+                    ?>
+                  </div>
+                  <?php
+                }
+              ?>
+
                 <div class="form-label-group">
-                  <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                  <input name="email" value="<?= $email ?>" type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
                   <label for="inputEmail">Email address</label>
                 </div>
 
                 <div class="form-label-group">
-                    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                    <input name="password"  type="password" id="inputPassword" class="form-control" placeholder="Password" required>
                     <label for="inputPassword">Password</label>
                 </div>
 

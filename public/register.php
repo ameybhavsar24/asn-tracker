@@ -1,4 +1,9 @@
 <?php
+  session_start();
+  if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+    header("location: dashboard.php");
+    exit;
+  }
   require_once("../db.php");
 
   $name = $email = $password = $confirm_password = "";
@@ -21,7 +26,7 @@
           // store result
           $stmt->store_result();
           if ($stmt->num_rows == 1) {
-            
+
             $email_err = "This email already exists";
           } else {
             $email = $mysqli->real_escape_string(trim($_POST["email"]));
@@ -74,7 +79,7 @@
         $stmt->bind_param("sss", $param_name, $param_email, $param_password);
 
         // Attempt to exectute the prepared statement
-        if ($stmt->execute()) {          
+        if ($stmt->execute()) {
           header("location: login.php");
         } else {
           echo "<script>alert('Oops! Something went wrong. Please try again later.')</script>";
@@ -101,7 +106,7 @@
 
 
   <?php
-    // include ('nav.php');
+    include ('nav.php');
   ?>
 
   <div class="container">
@@ -114,17 +119,17 @@
           <div class="card-body">
             <h5 class="card-title text-center">Sign Up</h5>
               <form class="form-form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-
-                <?php 
+                
+                <?php
                   if (!$check_errors) {
                     ?>
                     <div class="alert alert-danger" role="alert">
                       <!-- Form errors here -->
-                      <?php 
-                        if ($name_err) echo "<p>".$name_err."</p>";
-                        if ($email_err) echo "<p>".$email_err."</p>";
-                        if ($password_err) echo "<p>".$password_err."</p>";
-                        if ($confirm_password_err) echo "<p>".$confirm_password_err."</p>";
+                      <?php
+                        if (!empty($name_err)) echo "<p>".$name_err."</p>";
+                        if (!empty($email_err)) echo "<p>".$email_err."</p>";
+                        if (!empty($password_err)) echo "<p>".$password_err."</p>";
+                        if (!empty($confirm_password_err)) echo "<p>".$confirm_password_err."</p>";
                       ?>
                     </div>
                     <?php
@@ -132,22 +137,22 @@
                 ?>
 
                 <div class="form-label-group">
-                  <input name="name" type="text" id="inputUserame" class="form-control" placeholder="Name" required autofocus>
+                  <input name="name" value="<?= $name ?>" type="text" id="inputUserame" class="form-control" placeholder="Name" required autofocus>
                   <label for="inputUserame">Name</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input name="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
+                  <input name="email" value="<?= $email ?>" type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
                   <label for="inputEmail">Email address</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                  <input name="password" value="<?= $password ?>" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
                   <label for="inputPassword">Password</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input name="confirm_password" type="password" id="inputConfirmPassword" class="form-control" placeholder="Password" required>
+                  <input name="confirm_password" type="password" id="inputConfirmPassword" class="form-control" placeholder="Confirm password" required>
                   <label for="inputConfirmPassword">Confirm password</label>
                 </div>
 
