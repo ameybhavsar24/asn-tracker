@@ -1,4 +1,8 @@
-
+.navbar {
+  position:fixed;
+  top:0;
+  width:100%;
+}
 
 .nav-link {
   transition:background-color 300ms;
