@@ -1,3 +1,11 @@
+<?php
+  session_start();
+  if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if (!isset($_GET['courseID'])) {
+      header("location: dashboard.php");
+    }
+  }
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -16,13 +24,10 @@
 
 <body>
   <?php
-    include ('nav-dashboard.php');
+    include_once ('nav-dashboard.php');
   ?>
-
-  
-
   <?php
-    include ('footer.php');
+    include_once ('footer.php');
   ?>
 
   <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>

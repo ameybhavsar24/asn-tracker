@@ -29,7 +29,7 @@
   <h3 class="enrolled-created-courses-headings">Enrolled Courses:</h3>
   <div class="courses-cnt">
     <div class="courses">
-      <a href="view-course-enrolled.php">
+      <a href="view-course-enrolled.php?courseID=1">
         <div class="courses-head">
           <h4>Course Name</h4>
           Course Create Name
@@ -81,7 +81,7 @@
 
   <div class="courses-cnt">
     <div class="courses">
-      <a href="view-course-created.php">
+      <a href="view-course-created.php?courseID=151">
         <div class="courses-head">
           <h4>Course Name</h4>
         </div>

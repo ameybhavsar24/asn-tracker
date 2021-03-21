@@ -7,7 +7,7 @@
     header("location: dashboard.php");
     exit;
   }
-  require_once("../db.php");
+    require_once("../db.php");
 
   $email = $password = "";
   $email_err = $password_err = "";
@@ -91,7 +91,7 @@
   ?>
   <div class="container">
     <div class="row">
-      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto my-5">
+      <div class="col-12 col-sm-9 col-md-7 col-lg-5 mx-auto my-5">
         <div class="card card-form my-5">
           <div class="card-body">
             <h5 class="card-title text-center">Sign In</h5>

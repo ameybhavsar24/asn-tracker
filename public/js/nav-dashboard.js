@@ -1,11 +1,11 @@
-function enrollcourse() {
-  alert("Enroll Course");
-}
+// function enrollcourse() {
+//   alert("Enroll Course");
+// }
 
-function createcourse() {
-  alert("Create Course");
-}
+// function createcourse() {
+//   alert("Create Course");
+// }
 
-function profile() {
-  alert("Profile");
-}
+// function profile() {
+//   alert("Profile");
+// }
