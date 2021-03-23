@@ -5,6 +5,36 @@
     header("location: login.php");
     exit;
   }
+  require_once('../db.php');
+  $courses_created = [];
+  $id = $_SESSION["id"];
+  $email = $_SESSION["email"];
+  $name = $_SESSION["name"];
+  // get created courses
+  $sql = "SELECT * FROM courses WHERE creatorId = ?";
+  if ($stmt = $mysqli->prepare($sql)) {
+    $param_creatorId = $id;
+    $stmt->bind_param("s", $param_creatorId);
+    if ($stmt->execute()) {
+      $stmt->store_result();
+      $result = $stmt->get_result();
+      if ($stmt->num_rows > 0) {
+        $stmt->bind_result($courseId, $courseName, $courseDescription, $courseCreatorId);
+        while ($stmt->fetch()) {
+          $course = array(
+            'id' => $id,
+            'name' => $courseName,
+            'description' => $courseDescription,
+            'creatorId' => $courseCreatorId,
+          );
+          array_push($courses_created, $course);
+        }
+      }
+
+    } else {
+      echo 'Failed to execute sql query';
+    }
+  }
 ?>
 <!doctype html>
 <html lang="en">
@@ -80,49 +110,25 @@
   <h3 class="enrolled-created-courses-headings">Created Courses:</h3>
 
   <div class="courses-cnt">
-    <div class="courses">
-      <a href="view-course-created.php?courseID=151">
-        <div class="courses-head">
-          <h4>Course Name</h4>
+    <?php
+      foreach($courses_created as $course) {
+        ?>
+        <!-- Course card for each of the created course -->
+        <div class="courses">
+          <a href="view-course-created.php?courseID=<?= $course["id"] ?>">
+            <div class="courses-head">
+              <h4><?= $course["name"] ?></h4>
+            </div>
+            <div class="courses-desc">
+              Assigned Works
+            </div>
+          </a>
         </div>
-        <div class="courses-desc">
-          Assigned Works
-        </div>
-      </a>
-    </div>
-    
-    <div class="courses">
-      <a href="view-course-created.php">
-        <div class="courses-head">
-          <h4>Course Name</h4>
-        </div>
-        <div class="courses-desc">
-          Assigned Works
-        </div>
-      </a>
-    </div>
-    
-    <div class="courses">
-      <a href="view-course-created.php">
-        <div class="courses-head">
-          <h4>Course Name</h4>
-        </div>
-        <div class="courses-desc">
-          Assigned Works
-        </div>
-      </a>
-    </div>
-    
-    <div class="courses">
-      <a href="view-course-created.php">
-        <div class="courses-head">
-          <h4>Course Name</h4>
-        </div>
-        <div class="courses-desc">
-          Assigned Works
-        </div>
-      </a>
-    </div>
+
+        <?php
+      }
+    ?>
+
   </div>
 
   <?php
