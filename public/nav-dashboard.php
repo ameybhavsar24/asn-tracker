@@ -1,7 +1,7 @@
 <?php
   $file_name = basename($_SERVER["PHP_SELF"]);
 ?>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
   <a class="navbar-brand mb-0 h1" href="/">Assignment Tracker</a>
 
   <button

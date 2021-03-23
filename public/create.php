@@ -33,7 +33,7 @@
 
         // Attempt to exectute the prepared statement
         if ($stmt->execute()) {
-          echo ("<script>alert('Course  added successfully!')</script>");
+          
         } else {
           echo "<script>alert('Oops! Something went wrong. Please try again later.')</script>";
         }

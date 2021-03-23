@@ -1,12 +1,7 @@
-body {
-  margin-top: 1.5cm;
-}
-
 .jumbotron {
-  margin-top: 50px;
+  padding-top: 5rem;
   text-align: justify;
 }
-
 .btn-lg {
   margin: 2px;
 }

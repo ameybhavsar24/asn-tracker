@@ -1,8 +1,29 @@
 <?php
+  ini_set('display_errors', true);
+  error_reporting(E_ALL ^ E_NOTICE);
   session_start();
+  $courseId = $courseName = $courseDescription = $courseCreatorId = "";
   if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    if (!isset($_GET['courseID'])) {
+    if (!isset($_GET['courseId']) || empty(trim($_GET['courseId']))) {
       header("location: dashboard.php");
+    }
+    require_once('../db.php');
+    $courseId = $mysqli->real_escape_string(trim($_GET['courseId']));
+    // check if course exists and if yes, get details from table course
+    $sql = "SELECT `name`, `description`, `creatorId` FROM `courses` WHERE `courseId` = ?";
+    if ($stmt = $mysqli->prepare($sql)) {
+      $param_courseId = $courseId;
+      $stmt->bind_param("s", $param_courseId);
+      if ($stmt->execute()) {
+        $stmt->store_result();
+        if ($stmt->num_rows == 0) {
+          // course does not exists
+          header("location: dashboard.php?course=404");
+          exit;
+        }
+        $stmt->bind_result($courseName, $courseDescription, $courseCreatorId);
+        $stmt->fetch();
+      }
     }
   }
 ?>
@@ -26,6 +47,16 @@
   <?php
     include_once ('nav-dashboard.php');
   ?>
+
+  <div>
+  <h2><?= $courseName ?></h2>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-sm-6"><?= $courseDescription ?></div>
+      <div class="col-12 col-sm-6">Creator name</div>
+    </div>
+  </div>
+  </div>
   <?php
     include_once ('footer.php');
   ?>

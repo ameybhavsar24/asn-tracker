@@ -1,11 +1,20 @@
-// Styling related to the whole HTML go heres
+/* Styling related to the whole HTML go heres */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-size: 16px;
+  color: red;
 }
 
 html {
   scroll-behavior: smooth;
+}
+body {
+  padding-top: 60px;
+}
+@media (max-width: 979px) {
+  body {
+    padding-top: 0px;
+  }
 }

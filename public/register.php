@@ -80,7 +80,7 @@
 
         // Attempt to exectute the prepared statement
         if ($stmt->execute()) {
-          header("location: login.php");
+          header("location: login.php?status=1");
         } else {
           echo "<script>alert('Oops! Something went wrong. Please try again later.')</script>";
         }
