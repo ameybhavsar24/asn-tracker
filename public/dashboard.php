@@ -69,7 +69,7 @@
         </div>
       </a>
     </div>
-    
+
     <div class="courses">
       <a href="view-course-enrolled.php">
         <div class="courses-head">
@@ -81,7 +81,7 @@
         </div>
       </a>
     </div>
-    
+
     <div class="courses">
       <a href="view-course-enrolled.php">
         <div class="courses-head">
@@ -93,7 +93,7 @@
         </div>
       </a>
     </div>
-    
+
     <div class="courses">
       <a href="view-course-enrolled.php">
         <div class="courses-head">
@@ -115,7 +115,7 @@
         ?>
         <!-- Course card for each of the created course -->
         <div class="courses">
-          <a href="view-course-created.php?courseId=<?= $course["id"] ?>">
+          <a href="course.php?courseId=<?= $course["id"] ?>">
             <div class="courses-head">
               <h4><?= $course["name"] ?></h4>
             </div>

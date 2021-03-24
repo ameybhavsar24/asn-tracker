@@ -2,6 +2,16 @@
   ini_set('display_errors', true);
   error_reporting(E_ALL ^ E_NOTICE);
   session_start();
+  // Check if user is already logged in
+  if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] === false) {
+    header("location: login.php");
+    exit;
+  }
+
+  $id = $_SESSION["id"];
+  $email = $_SESSION["email"];
+  $name = $_SESSION["name"];
+
   $courseId = $courseName = $courseDescription = $courseCreatorId = "";
   if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (!isset($_GET['courseId']) || empty(trim($_GET['courseId']))) {
@@ -26,6 +36,7 @@
       }
     }
   }
+  $createdCourse = $id == $courseCreatorId;
 ?>
 <!doctype html>
 <html lang="en">
@@ -49,11 +60,24 @@
   ?>
 
   <div>
-  <h2><?= $courseName ?></h2>
   <div class="container">
-    <div class="row">
-      <div class="col-12 col-sm-6"><?= $courseDescription ?></div>
-      <div class="col-12 col-sm-6">Creator name</div>
+    <div class="row" id="courseBanner">
+      <?php
+        if ($createdCourse) {
+        ?>
+        <div class="col-12">
+          <p class="lead">You created this course.</p>
+        </div>
+        <?php
+        }
+      ?>
+      <div class="col-12">
+        <h1>
+          <?= $courseName ?>
+          <small class="text-muted lead">by Jackie Chan</small>
+        </h1>
+      </div>
+      <div class="col-12"><?= $courseDescription ?></div>
     </div>
   </div>
   </div>
