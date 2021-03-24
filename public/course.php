@@ -12,7 +12,7 @@
   $email = $_SESSION["email"];
   $name = $_SESSION["name"];
 
-  $courseId = $courseName = $courseDescription = $courseCreatorId = "";
+  $courseId = $courseName = $courseDescription = $courseCreatorId = $courseCreatorName = $courseCreatorEmail = "";
   if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (!isset($_GET['courseId']) || empty(trim($_GET['courseId']))) {
       header("location: dashboard.php");
@@ -20,7 +20,8 @@
     require_once('../db.php');
     $courseId = $mysqli->real_escape_string(trim($_GET['courseId']));
     // check if course exists and if yes, get details from table course
-    $sql = "SELECT `name`, `description`, `creatorId` FROM `courses` WHERE `courseId` = ?";
+    // $sql = "SELECT `name`, `description`, `creatorId` FROM `courses` WHERE `courseId` = ?";
+    $sql = "SELECT courses.name, courses.description, courses.creatorId, users.name, users.email FROM courses INNER JOIN users on courses.creatorId = users.id  WHERE courses.courseId = ?";
     if ($stmt = $mysqli->prepare($sql)) {
       $param_courseId = $courseId;
       $stmt->bind_param("s", $param_courseId);
@@ -31,7 +32,7 @@
           header("location: dashboard.php?course=404");
           exit;
         }
-        $stmt->bind_result($courseName, $courseDescription, $courseCreatorId);
+        $stmt->bind_result($courseName, $courseDescription, $courseCreatorId, $courseCreatorName, $courseCreatorEmail);
         $stmt->fetch();
       }
     }
@@ -59,27 +60,28 @@
     include_once ('nav-dashboard.php');
   ?>
 
-  <div>
-  <div class="container">
+  <div class="container-fluid">
     <div class="row" id="courseBanner">
       <?php
         if ($createdCourse) {
         ?>
         <div class="col-12">
-          <p class="lead">You created this course.</p>
+          <p class="muted">You created this course.</p>
         </div>
         <?php
         }
       ?>
       <div class="col-12">
-        <h1>
+        <h1 class="display-4">
           <?= $courseName ?>
-          <small class="text-muted lead">by Jackie Chan</small>
+          <small style="display: inline;" class="text-muted lead"> by <?= $courseCreatorName ?></small>
         </h1>
       </div>
-      <div class="col-12"><?= $courseDescription ?></div>
+      <div class="col-12">
+        <?= $courseDescription ?>
+      </div>
+      <div class="col-12"><hr /></div>
     </div>
-  </div>
   </div>
   <?php
     include_once ('footer.php');
