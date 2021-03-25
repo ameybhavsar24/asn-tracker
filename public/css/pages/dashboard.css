@@ -1,12 +1,13 @@
 .enrolled-created-courses-headings {
-  padding:20px 0 0 20px;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  margin: 1rem 0rem;
 }
 
 .courses-cnt {
   display:flex;
   flex-wrap:wrap;
   width:100%;
+  padding: 2rem 0rem;
 }
 
 .courses {

@@ -1,4 +1,6 @@
 <?php
+  ini_set('display_errors', true);
+  error_reporting(E_ALL ^ E_NOTICE);
   session_start();
   // Check if user is already logged in
   if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] === false) {
@@ -6,10 +8,35 @@
     exit;
   }
   require_once('../db.php');
-  $courses_created = [];
+  $courses_enrolled = $courses_created = [];
   $id = $_SESSION["id"];
   $email = $_SESSION["email"];
   $name = $_SESSION["name"];
+
+  // get enrolled courses
+  $sql = "SELECT enrollments.courseId, courses.name, courses.description, users.name FROM ( (enrollments INNER JOIN courses ON enrollments.courseId = courses.courseId) INNER JOIN users ON users.id = courses.creatorId ) WHERE enrollments.userId = ?";
+  if ($stmt = $mysqli->prepare($sql)) {
+    $param_userId = $id;
+    $stmt->bind_param("s", $param_userId);
+    if ($stmt->execute()) {
+      $stmt->store_result();
+      $result = $stmt->get_result();
+      if ($stmt->num_rows > 0) {
+        $stmt->bind_result($enrolledCourseId, $enrolledCourseName, $enrolledCourseDescription, $enrolledCourseCreatorName);
+        while ($stmt->fetch()) {
+          $course = array(
+            'id' => $enrolledCourseId,
+            'name' => $enrolledCourseName,
+            'description' => $enrolledCourseDescription,
+            'creator' => $enrolledCourseCreatorName,
+          );
+          array_push($courses_enrolled, $course);
+        }
+      }
+    } else {
+      echo 'Failed to execute sql query';
+    }
+  }
   // get created courses
   $sql = "SELECT * FROM courses WHERE creatorId = ? ORDER BY courseId DESC";
   if ($stmt = $mysqli->prepare($sql)) {
@@ -35,6 +62,10 @@
       echo 'Failed to execute sql query';
     }
   }
+/*  echo '<pre>';
+  var_dump($courses_enrolled);
+  var_dump($courses_created);
+  echo '</pre>';*/
 ?>
 <!doctype html>
 <html lang="en">
@@ -56,61 +87,38 @@
   <?php
     include ('nav-dashboard.php');
   ?>
+  <div class="container-fluid">
+  <h4><span class="text-muted">Hello, </span> <?= $name ?></h4>
   <h3 class="enrolled-created-courses-headings">Enrolled Courses:</h3>
   <div class="courses-cnt">
-    <div class="courses">
-      <a href="view-course-enrolled.php?courseID=1">
-        <div class="courses-head">
-          <h4>Course Name</h4>
-          Course Create Name
-        </div>
-        <div class="courses-desc">
-          Assigned Works
-        </div>
-      </a>
-    </div>
-
-    <div class="courses">
-      <a href="view-course-enrolled.php">
-        <div class="courses-head">
-          <h4>Course Name</h4>
-          Course Creater Name
-        </div>
-        <div class="courses-desc">
-          Assigned Works
-        </div>
-      </a>
-    </div>
-
-    <div class="courses">
-      <a href="view-course-enrolled.php">
-        <div class="courses-head">
-          <h4>Course Name</h4>
-          Course Create Name
-        </div>
-        <div class="courses-desc">
-          Assigned Works
-        </div>
-      </a>
-    </div>
-
-    <div class="courses">
-      <a href="view-course-enrolled.php">
-        <div class="courses-head">
-          <h4>Course Name</h4>
-          Course Create Name
-        </div>
-        <div class="courses-desc">
-          Assigned Works
-        </div>
-      </a>
-    </div>
+    <?php
+      if (!empty($courses_enrolled)) {
+      foreach($courses_enrolled as $course) {
+      ?>
+      <div class="courses">
+        <a href="course.php?courseId=<?= $course["id"] ?>">
+          <div class="courses-head">
+            <h4><?= $course["name"] ?></h4>
+            <?= $course["creator"] ?>
+          </div>
+          <div class="courses-desc">
+            Assigned Works
+          </div>
+        </a>
+      </div>
+      <?php
+      }
+      } else {
+        echo '<p class="small lead">You have not enrolled for any course. <a href="enroll.php">Enroll in a course.</a></p>';
+      }
+    ?>
   </div>
 
   <h3 class="enrolled-created-courses-headings">Created Courses:</h3>
 
   <div class="courses-cnt">
     <?php
+      if (!empty($courses_created)) {
       foreach($courses_created as $course) {
         ?>
         <!-- Course card for each of the created course -->
@@ -127,10 +135,14 @@
 
         <?php
       }
+      }
+      else {
+        echo '<p class="small lead">You have not created any courses. <a href="create.php">Create a new course.</a></p>';
+      }
     ?>
 
   </div>
-
+  </div>
   <?php
     include ('footer.php');
   ?>
@@ -144,6 +156,9 @@
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
       if ($_GET["course"] == "404") {
         echo '<script>alert("Invalid course id.")</script>';
+      }
+      if ($_GET["enrolled"] == "success") {
+        echo '<script>alert("Enrolled in course successfully.")</script>';
       }
     }
   ?>

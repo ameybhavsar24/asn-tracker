@@ -11,4 +11,6 @@ html {
 body {
   padding-top: 60px;
 }
-
+body .container, body .container-fluid {
+  min-height: 50vh;
+}
