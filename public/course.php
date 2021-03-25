@@ -78,7 +78,15 @@
         </h1>
       </div>
       <div class="col-12">
-        <?= $courseDescription ?>
+        <div class="row">
+          <div class="col-12 col-sm-6">
+            <?= $courseDescription ?>
+          </div>
+          <div class="col-12 col-sm-6 text-right">
+            <p class="lead">Course Code: <b><?= $courseId ?></b></p>
+          </div>
+        </div>
+
       </div>
       <div class="col-12"><hr /></div>
     </div>

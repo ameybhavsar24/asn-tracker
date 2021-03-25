@@ -9,6 +9,7 @@ html {
   scroll-behavior: smooth;
 }
 body {
+  background: #fdfdfd;
   padding-top: 60px;
 }
 body .container, body .container-fluid {

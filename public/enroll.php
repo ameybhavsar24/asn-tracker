@@ -29,9 +29,8 @@
         $stmt->bind_param("s", $param_courseCode);
         if ($stmt->execute()) {
           $stmt->store_result();
-          var_dump($stmt);
           if ($stmt->num_rows == 0) {
-            $courseCodeErr = "Invalid course code. Course does not exist.";
+            $courseCodeErr = "Invalid course code <b>".$courseCode."</b>. Course does not exist.";
           }
         } else {
           echo 'Failed to check if course exists';
@@ -89,7 +88,14 @@
               <form class="form-form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <?php
                   if (!$check_errors) {
-                    echo $courseCodeErr;
+                    ?>
+                    <div class="alert alert-danger" role="alert">
+                      <!-- Form errors here -->
+                      <?php
+                        if (!empty($courseCodeErr)) echo $courseCodeErr.'<br/ >';
+                      ?>
+                    </div>
+                    <?php
                   }
                 ?>
                 <div class="form-label-group">

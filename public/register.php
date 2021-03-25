@@ -119,17 +119,17 @@
           <div class="card-body">
             <h5 class="card-title text-center">Sign Up</h5>
               <form class="form-form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                
+
                 <?php
                   if (!$check_errors) {
                     ?>
                     <div class="alert alert-danger" role="alert">
                       <!-- Form errors here -->
                       <?php
-                        if (!empty($name_err)) echo "<p>".$name_err."</p>";
-                        if (!empty($email_err)) echo "<p>".$email_err."</p>";
-                        if (!empty($password_err)) echo "<p>".$password_err."</p>";
-                        if (!empty($confirm_password_err)) echo "<p>".$confirm_password_err."</p>";
+                        if (!empty($name_err)) echo $name_err.'<br />';
+                        if (!empty($email_err)) echo $email_err.'<br />';
+                        if (!empty($password_err)) echo $password_err.'<br />';
+                        if (!empty($confirm_password_err)) echo $confirm_password_err.'<br />';
                       ?>
                     </div>
                     <?php
