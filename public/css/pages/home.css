@@ -1,13 +1,7 @@
-body {
-	margin-top:1.5cm;
+.jumbotron {
+  padding-top: 5rem;
+  text-align: justify;
 }
-
-.jumbotron
-  {
-    margin-top: 50px;
-    text-align: justify;
-  }
-
 .btn-lg {
   margin: 2px;
 }
@@ -49,11 +43,12 @@ body {
 
 .feature-desc h4 {
   color: #007bff;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .feature-desc p {
-  color: rgb(122,122,122);
+  color: rgb(122, 122, 122);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -74,137 +69,159 @@ body {
 }
 
 .contact {
-  padding:20px;
-  background:url("../images/contact-bg.png");
-  background-position:center;
-  background-repeat:no-repeat;
-  background-size:auto;
-  text-align:center;
-  z-index:0;
+  padding: 20px;
+  background: url('../images/contact-bg.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: auto;
+  text-align: center;
+  z-index: 0;
 }
-  .contact-form {
-    display:flex;
-    margin:25px auto 25px auto;
-    width:70%;
-  }
-    .name-email, .text-area {
-      flex:50%;
-      margin:auto;
-    }
-      input[type = text], input[type = email], textarea{
-        padding:5px;
-        width:90%;
-        text-align:justify;
-        outline:none;
-        border:2px solid #ccc;
-        transition:all 200ms;
-      }
-      input[type = email] {
-        margin-top:45px;
-      }
-      textarea {
-        resize:vertical;
-      }
-        input[type = text]:hover, input[type = email]:hover, textarea:hover {
-          border:2px solid #64adff;
-        }
-        input[type = text]:focus, input[type = email]:focus, textarea:focus {
-          border:2px solid #077bff;
-        }
-
-        textarea::scrollbar {height:0; width:14px;}
-        textarea::scrollbar-track {opacity:0;}
-        textarea::scrollbar-thumb {background:rgb(197, 197, 197); outline:none; border:4px solid #fff; border-radius:10px;}
-            
-        textarea::-webkit-scrollbar {height:0; width:14px;}
-        textarea::-webkit-scrollbar-track {opacity:0;}
-        textarea::-webkit-scrollbar-thumb {background:rgb(197, 197, 197); outline:none; border:4px solid #fff; border-radius:10px;}
-            
-        textarea::-moz-scrollbar {height:0; width:14px;}
-        textarea::-moz-scrollbar-track {opacity:0;}
-        textarea::-moz-scrollbar-thumb {background:rgb(197, 197, 197); outline:none; border:4px solid #fff; border-radius:10px;}
-            
-        textarea::-o-scrollbar {height:0; width:14px;}
-        textarea::-o-scrollbar-track {opacity:0;}
-        textarea::-o-scrollbar-thumb {background:rgb(197, 197, 197); outline:none; border:4px solid #fff; border-radius:10px;}
-
-    input[type = submit] {
-      padding:10px;
-      background-color:#f5f5f5;
-      color:#077bff;
-      font-weight:bold;
-      cursor:pointer;
-      outline:none;
-      border:none;
-      border-radius:10px;
-      tap-highlight-color:transparent;
-      -webkit-tap-highlight-color:transparent;
-      -moz-tap-highlight-color:transparent;
-      -o-tap-highlight-color:transparent;
-      transition:all 250ms;
-    }
-      input[type = submit]:hover {
-        background-color:#077bff;
-        color:#fff;
-      }
-
-@media only screen and (max-width:25cm)
-{
-.home-page-headings {
-  font-size: 50px;
-}
-
-.features {
-  flex-wrap: wrap;
-}
-  
-.feature-n {
-  flex: 100%;
+.contact-form {
   display: flex;
+  margin: 25px auto 25px auto;
+  width: 70%;
 }
-  
-.feature-img, .feature-desc {
+.name-email,
+.text-area {
   flex: 50%;
+  margin: auto;
+}
+textarea::scrollbar {
+  height: 0;
+  width: 14px;
+}
+textarea::scrollbar-track {
+  opacity: 0;
+}
+textarea::scrollbar-thumb {
+  background: rgb(197, 197, 197);
+  outline: none;
+  border: 4px solid #fff;
+  border-radius: 10px;
 }
 
-.contact-form {
-  width:100%;
+textarea::-webkit-scrollbar {
+  height: 0;
+  width: 14px;
 }
+textarea::-webkit-scrollbar-track {
+  opacity: 0;
+}
+textarea::-webkit-scrollbar-thumb {
+  background: rgb(197, 197, 197);
+  outline: none;
+  border: 4px solid #fff;
+  border-radius: 10px;
 }
 
-@media only screen and (max-width:20cm) {
-.contact-form {
-  display:inherit;
-  width:95%;
+textarea::-moz-scrollbar {
+  height: 0;
+  width: 14px;
 }
-  .name-email, .text-area {
-    width:100%;
+textarea::-moz-scrollbar-track {
+  opacity: 0;
+}
+textarea::-moz-scrollbar-thumb {
+  background: rgb(197, 197, 197);
+  outline: none;
+  border: 4px solid #fff;
+  border-radius: 10px;
+}
+
+textarea::-o-scrollbar {
+  height: 0;
+  width: 14px;
+}
+textarea::-o-scrollbar-track {
+  opacity: 0;
+}
+textarea::-o-scrollbar-thumb {
+  background: rgb(197, 197, 197);
+  outline: none;
+  border: 4px solid #fff;
+  border-radius: 10px;
+}
+
+input[type='submit'] {
+  padding: 10px;
+  background-color: #f5f5f5;
+  color: #077bff;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  border-radius: 10px;
+  tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent;
+  -moz-tap-highlight-color: transparent;
+  -o-tap-highlight-color: transparent;
+  transition: all 250ms;
+}
+input[type='submit']:hover {
+  background-color: #077bff;
+  color: #fff;
+}
+
+@media only screen and (max-width: 25cm) {
+  .home-page-headings {
+    font-size: 50px;
   }
-    .text-area, input[type = email] {
-      margin-top:30px;
-    }
+
+  .features {
+    flex-wrap: wrap;
+  }
+
+  .feature-n {
+    flex: 100%;
+    display: flex;
+  }
+
+  .feature-img,
+  .feature-desc {
+    flex: 50%;
+  }
+
+  .contact-form {
+    width: 100%;
+  }
 }
 
-@media only screen and (max-width:15cm)
-{
-.home-page-headings {
-  font-size: 40px;
+@media only screen and (max-width: 20cm) {
+  .contact-form {
+    display: inherit;
+    width: 95%;
+  }
+  .name-email,
+  .text-area {
+    width: 100%;
+  }
+  .text-area,
+  input[type='email'] {
+    margin-top: 30px;
+  }
 }
 
-.features {
-  padding: 20px;
-}
-  
-.feature-n {
-  flex-wrap: wrap;
-  padding: 20px;
-}
-  
-.feature-img, .feature-desc {
-  flex: 100%;
-}
-  
-.feature-desc {
-  padding: 5px;
-}
+@media only screen and (max-width: 15cm) {
+  .home-page-headings {
+    font-size: 40px;
+  }
+
+  .features {
+    padding: 20px;
+  }
+
+  .feature-n {
+    flex-wrap: wrap;
+    padding: 20px;
+  }
+
+  .feature-img,
+  .feature-desc {
+    flex: 100%;
+  }
+
+  .feature-desc {
+    padding: 5px;
+  }
 }
