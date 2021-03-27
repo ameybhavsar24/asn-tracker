@@ -11,19 +11,19 @@
   $id = $_SESSION["id"];
   $email = $_SESSION["email"];
   $name = $_SESSION["name"];
-
-  $courseId = $courseName = $courseDescription = $courseCreatorId = $courseCreatorName = $courseCreatorEmail = "";
+  $course = [];
+  $assignments = [];
   if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (!isset($_GET['courseId']) || empty(trim($_GET['courseId']))) {
       header("location: dashboard.php");
     }
     require_once('../db.php');
-    $courseId = $mysqli->real_escape_string(trim($_GET['courseId']));
+    $course['id'] = $mysqli->real_escape_string(trim($_GET['courseId']));
     // check if course exists and if yes, get details from table course
     // $sql = "SELECT `name`, `description`, `creatorId` FROM `courses` WHERE `courseId` = ?";
     $sql = "SELECT courses.name, courses.description, courses.creatorId, users.name, users.email FROM courses INNER JOIN users on courses.creatorId = users.id  WHERE courses.courseId = ?";
     if ($stmt = $mysqli->prepare($sql)) {
-      $param_courseId = $courseId;
+      $param_courseId = $course['id'];
       $stmt->bind_param("s", $param_courseId);
       if ($stmt->execute()) {
         $stmt->store_result();
@@ -32,12 +32,38 @@
           header("location: dashboard.php?course=404");
           exit;
         }
-        $stmt->bind_result($courseName, $courseDescription, $courseCreatorId, $courseCreatorName, $courseCreatorEmail);
+        $stmt->bind_result($course['name'], $course['description'], $course['creatorId'], $course['creatorName'], $course['creatorEmail']);
         $stmt->fetch();
       }
     }
+
+    // get course assignments
+    $sql = "SELECT * FROM assignments WHERE courseId = ? ORDER BY creationTime DESC";
+    if ($stmt = $mysqli->prepare($sql)) {
+      $param_courseId =$course['id'];
+      $stmt->bind_param("s", $param_courseId);
+      if ($stmt->execute()) {
+        $stmt->store_result();
+        $result = $stmt->get_result();
+        if ($stmt->num_rows > 0) {
+          $stmt->bind_result($assignmentId, $assignmentTitle, $assignmentDescription, $assignmentCourseId, $assignmentCreationTime, $assignmentDueTime, $assignmentType);
+          while ($stmt->fetch()) {
+            $new_assignment = array (
+              'id' => $assignmentId,
+              'title' => $assignmentTitle,
+              'description' => $assignmentDescription,
+              'courseId' => $assignmentCourseId,
+              'creationTime' => $assignmentCreationTime,
+              'dueTime' => $assignmentDueTime,
+              'type' => $assignmentType
+            );
+            array_push($assignments, $new_assignment);
+          }
+        }
+      }
+    }
   }
-  $createdCourse = $id == $courseCreatorId;
+  $createdCourse = $id == $course['creatorId'];
 ?>
 <!doctype html>
 <html lang="en">
@@ -73,23 +99,108 @@
       ?>
       <div class="col-12">
         <h1 class="display-4">
-          <?= $courseName ?>
-          <small style="display: inline;" class="text-muted lead"> by <?= $courseCreatorName ?></small>
+          <?= $course['name'] ?>
+          <small style="display: inline;" class="text-muted lead"> by <?= $course['creatorName'] ?></small>
         </h1>
       </div>
       <div class="col-12">
         <div class="row">
           <div class="col-12 col-sm-6">
-            <?= $courseDescription ?>
+            <?= $course['description'] ?>
           </div>
           <div class="col-12 col-sm-6 text-right">
-            <p class="lead">Course Code: <b><?= $courseId ?></b></p>
+            <p class="lead">Course Code: <b><?= $course['id'] ?></b></p>
           </div>
         </div>
 
       </div>
       <div class="col-12"><hr /></div>
     </div>
+
+
+    <div class="container">
+      <div class="row">
+        <?php
+          if (!empty($assignments)) {
+            foreach($assignments as $assignment) {
+        ?>
+        <div class="col-12">
+        <div class="card assignment-item" data-toggle="modal" data-target="#assignmentModal<?= $assignment['id'] ?>">
+          <div class="card-body">
+            <h5 class="card-title"><?= $assignment['title'] ?></h5>
+            <h6 class="card-subtitle mb-3">
+              <p class="mb-1">
+                <?php
+                  if ($assignment['type'] == 'document') {
+                    echo "Written assignment";
+                  } else if ($assignment['type'] == 'code') {
+                    echo "Coding assignment";
+                  }
+                ?>
+              </p>
+            </h6>
+            <p class="card-text text-right small">
+              <?= date("d F, Y", strtotime($assignment['creationTime'])) ?>
+            </p>
+          </div>
+        </div>
+        </div>
+        <div class="modal fade" id="assignmentModal<?= $assignment['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel"><?= $assignment['title'] ?></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="mt-1 mb-2">
+                  <?= $assignment['description'] ?>
+                </div>
+                <?php
+                  if ($assignment['type'] == 'document') {
+                  ?>
+                  <h6>Upload assignment as a document. <p class="text-muted small">Supported types are .docx, .ppt, .txt & .pdf</p></h6>
+                  <div class="file-input">
+                    <input type="file" id="file<?= $assignment['id'] ?>" class="file" accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, image/">
+                    <label class="btn btn-primary" for="file<?= $assignment['id'] ?>">Select file</label>
+                    <p class="file-name"></p>
+                  </div>
+                  <?php
+                  } else if ($assignment['type'] == 'code') {
+                  ?>
+                  <div class="form-group">
+                    <label class="h6" for="codeTextArea<?= $assignment['id'] ?>">Paste your code in the following textbox.</label>
+                    <textarea class="form-control" id="codeTextArea<?= $assignment['id'] ?>" rows="10"></textarea>
+                  </div>
+                  <?php
+                  }
+                ?>
+                <hr />
+                <p class="text-muted small">
+                  <span class="text-danger">
+                    <?= 'Due on: '.date("H:i A d F, Y", strtotime($assignment['dueTime'])) ?><br />
+                  </span>
+                  <span class="text-primary">
+                    <?= 'Created on: '.date("H:i A d F, Y", strtotime($assignment['creationTime'])) ?>
+                  </span>
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Submit assignment</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <?php
+            }
+          }
+        ?>
+      </div>
+    </div>
+
   </div>
   <?php
     include_once ('footer.php');
@@ -98,5 +209,20 @@
   <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script>
+  const file = document.querySelector('#file');
+  file.addEventListener('change', (e) => {
+    // Get the selected file
+    const [file] = e.target.files;
+    // Get the file name and size
+    const { name: fileName, size } = file;
+    // Convert size in bytes to kilo bytes
+    const fileSize = (size / 1000).toFixed(2);
+    // Set the text content
+    const fileNameAndSize = `${fileName} - ${fileSize}KB`;
+    document.querySelector('.file-name').textContent = fileNameAndSize;
+  });
+
+  </script>
 </body>
 </html>
