@@ -1,7 +1,12 @@
 // Styling related to fonts go here
-html {
+@import url('https://rsms.me/inter/inter.css');
+
+@supports (font-variation-settings: normal) {
+  html { font-family: 'Inter var', sans-serif; }
+}
+html, body {
   font-size: 1rem;
-  color: red;
+  font-family: 'Inter var', sans-serif;
 }
 
 @include media-breakpoint-up(sm) {

@@ -13,6 +13,31 @@
   $name = $_SESSION["name"];
   $course = [];
   $assignments = [];
+
+  if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    
+    require_once('../db.php');
+    $assignment = [
+      'title' => $mysqli->real_escape_string(trim($_POST['title'])),
+      'description' => $mysqli->real_escape_string(trim($_POST['description'])),
+      'dueTime' => $mysqli->real_escape_string(trim($_POST['dueTime'])),
+      'assignmentType' => $mysqli->real_escape_string(trim($_POST['assignmentType'])),
+      'courseId' => $_SESSION['curr_course']['id'],
+    ];
+    $sql = "INSERT INTO `assignments`(`title`, `description`, `courseId`, `dueTime`, `assignmentType`) VALUES (?,?,?,?,?)";
+    if ($stmt = $mysqli->prepare($sql)) {
+      $stmt->bind_param("ssiss", $assignment['title'], $assignment['description'], $assignment['courseId'], $assignment['dueTime'], $assignment['assignmentType']);
+      if ($stmt->execute()) {
+        header("location: dashboard.php?createAssignment=1");
+        exit;
+      } else {
+        echo 'Failed to add assignment => '.$mysqli->error;
+      }
+    } else {
+      echo 'Invalid query'.$mysqli->error;
+    }
+  }
+
   if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (!isset($_GET['courseId']) || empty(trim($_GET['courseId']))) {
       header("location: dashboard.php");
@@ -21,10 +46,11 @@
     $course['id'] = $mysqli->real_escape_string(trim($_GET['courseId']));
     // check if course exists and if yes, get details from table course
     // $sql = "SELECT `name`, `description`, `creatorId` FROM `courses` WHERE `courseId` = ?";
-    $sql = "SELECT courses.name, courses.description, courses.creatorId, users.name, users.email FROM courses INNER JOIN users on courses.creatorId = users.id  WHERE courses.courseId = ?";
+    // $sql = "SELECT courses.name, courses.description, courses.creatorId, users.name, users.email FROM courses INNER JOIN users on courses.creatorId = users.id  WHERE courses.courseId = ?";
+    $sql = "SELECT courses.name, courses.description, courses.creatorId, users.name, users.email FROM ( courses LEFT JOIN enrollments on courses.courseId = enrollments.courseId INNER JOIN users on courses.creatorId = users.id ) WHERE ( (enrollments.userId = ? OR courses.creatorId = ?) AND courses.courseId = ? )";
     if ($stmt = $mysqli->prepare($sql)) {
       $param_courseId = $course['id'];
-      $stmt->bind_param("s", $param_courseId);
+      $stmt->bind_param("sss", $id, $id, $param_courseId);
       if ($stmt->execute()) {
         $stmt->store_result();
         if ($stmt->num_rows == 0) {
@@ -33,6 +59,7 @@
           exit;
         }
         $stmt->bind_result($course['name'], $course['description'], $course['creatorId'], $course['creatorName'], $course['creatorEmail']);
+        $_SESSION['curr_course'] = $course;
         $stmt->fetch();
       }
     }
@@ -63,6 +90,7 @@
       }
     }
   }
+  $course = $_SESSION['curr_course'];
   $createdCourse = $id == $course['creatorId'];
 ?>
 <!doctype html>
@@ -119,6 +147,57 @@
 
 
     <div class="container">
+    <?php if($createdCourse) { ?>
+      <div class="row">
+        <div class="col-12">
+        <div class="card assignment-item">
+          <div class="card-body">
+            <h5 class="card-title">
+             Create new assignment task
+            </h5>
+            <form class="row form-form" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]).'?course='.$course['id'] ?>" method="post">
+
+              <div class="col-12">
+              <div class="form-label-group">
+                <input name="title" type="text" id="asnTitle" class="form-control" placeholder="Title of Assignment" required>
+                <label for="asnTitle">Title of Assignment</label>
+              </div>
+              </div>
+
+              <div class="col-12">
+              <div class="form-label-group">
+                <input name="description" type="text" id="asnDesc" class="form-control"  placeholder="Description" required>
+                <label for="asnDesc">Description</label>
+              </div>
+              </div>
+
+              <div class="col-12 col-md-4">
+              <div class="form-label-group">
+                <input min="<?= date('Y-m-d').'T'.date('H:i') ?>" name="dueTime" type="datetime-local" id="dueTime" class="form-control"  placeholder="Due Time" required>
+                <label for="dueTime">Due Time</label>
+              </div>
+              </div>
+
+              <div class="col-12 col-md-4">
+              <div class="form-group">
+                <label for="assignmentType">Select type of submission</label>
+                <select name="assignmentType" class="form-control" id="assignmentType">
+                  <option value="document">Document like word or pdf</option>
+                  <option value="code">Code</option>
+                </select>
+              </div>
+              </div>
+              <div class="col-12 row">
+                <div class="col-12 col-sm-4">
+                  <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Create</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        </div>
+      </div>
+    <?php } ?>
       <div class="row">
         <?php
           if (!empty($assignments)) {
