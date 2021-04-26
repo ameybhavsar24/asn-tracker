@@ -89,14 +89,45 @@
         }
       }
     }
-    $assignmentIds = [];
+    $assignmentIds = [$_SESSION['id']];
     foreach ($assignments as $assignment) {
       array_push($assignmentIds, $assignment['id']);
     }
-    $in    = str_repeat('?,', count($assignmentIds) - 1) . '?'; // placeholders
-    $sql = "SELECT * FROM `submission` WHERE (userId = ? AND assignmentId IN ($in))";
-    $stmt = $mysqli->prepare($sql);
-    
+    // echo '<pre>';
+    // var_dump($assignmentIds);
+    $in = str_repeat('?,', count($assignmentIds) - 2) . '?'; // placeholders
+    // $sql = "SELECT * FROM `submission` WHERE (userId = ? AND assignmentId IN ($in)) ORDER BY submissionTime DESC";
+    $sql = "SELECT * FROM (`submission` LEFT JOIN `assignments` ON submission.assignmentId = assignments.assignmentId) WHERE (userId = ? AND submission.assignmentId IN (?)) ORDER BY creationTime DESC";
+    // var_dump($sql);
+    if ($stmt = $mysqli->prepare($sql)) {
+      $types = str_repeat('i', count($assignmentIds)); //types
+      if ($stmt->bind_param($types, ...$assignmentIds)) {
+        // echo 'binded';
+        $stmt->execute();
+        $result = $stmt->get_result(); // get the mysqli result
+        $data = $result->fetch_all(MYSQLI_ASSOC); // fetch the data 
+        if (count($data) > 0) {
+          $i = 0; $j = 0;
+          
+          for ($i=0; $i<count($assignments); $i++) {
+            for ($j=0; $j<count($data); $j++) {
+              if ($data[$j]['assignmentId'] == $assignments[$i]['id']) {
+                $assignments[$i]['submission'] = $data[$j];
+                break;
+              }
+            }
+          }
+          // echo '<pre>';
+          // var_dump($assignments);
+          // echo '</pre>';
+        }
+      } else {
+        echo $mysqli->error;
+      }
+    } else {
+      echo 'Failed to prepare' . $mysqli->error;
+    }
+
   }
   $course = $_SESSION['curr_course'];
   $createdCourse = $id == $course['creatorId'];
@@ -215,6 +246,13 @@
         <div class="card assignment-item" data-toggle="modal" data-target="#assignmentModal<?= $key ?>">
           <div class="card-body">
             <h5 class="card-title"><?= $assignment['title'] ?></h5>
+            <p class="lead">
+            <?php 
+              if (isset($assignment['submission'])) {
+                echo '✅';
+              }
+            ?>
+            </p>
             <h6 class="card-subtitle mb-3">
               <p class="mb-1">
                 <?php
@@ -236,12 +274,33 @@
           <div class="modal-dialog modal-lg" role="document">
             <form class="modal-content" action="./submitAsn.php?id=<?= $key ?>" method="POST" enctype="multipart/form-data">
               <div class="modal-header">
-                <h4 class="modal-title" id="exampleModalLabel"><?= $assignment['title'] ?></h4>
+                <h4 class="modal-title" id="exampleModalLabel">
+                  <?= $assignment['title'] ?>
+                </h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
+                <?php
+                if (isset($assignment['submission'])) {
+                  ?>
+                  <p class="lead small">
+                    You have submitted this assignment but you can resubmit. ✅
+                  </p>
+                  <p class="lead">
+                  <h5 class="mt-0">Attachment</h5>
+                  <div class="card attachment-card">
+                    <div class="card-body">
+                      <h6 class="card-title mt-0 mb-0"><?= explode('/', $assignment['submission']['file_name'])[1] ?></h6>
+                      <a href="<?= $assignment['submission']['file_name'] ?>" class="stretched-link">Download</a>
+                    </div>
+                    
+                  </div>
+                  </p>
+                  <?php
+                }
+                ?>
                 <div class="mt-1 mb-2">
                   <?= $assignment['description'] ?>
                 </div>
