@@ -63,7 +63,6 @@
         $stmt->fetch();
       }
     }
-
     // get course assignments
     $sql = "SELECT * FROM assignments WHERE courseId = ? ORDER BY creationTime DESC";
     if ($stmt = $mysqli->prepare($sql)) {
@@ -86,9 +85,18 @@
             );
             array_push($assignments, $new_assignment);
           }
+          $_SESSION['assignments'] = $assignments;
         }
       }
     }
+    $assignmentIds = [];
+    foreach ($assignments as $assignment) {
+      array_push($assignmentIds, $assignment['id']);
+    }
+    $in    = str_repeat('?,', count($assignmentIds) - 1) . '?'; // placeholders
+    $sql = "SELECT * FROM `submission` WHERE (userId = ? AND assignmentId IN ($in))";
+    $stmt = $mysqli->prepare($sql);
+    
   }
   $course = $_SESSION['curr_course'];
   $createdCourse = $id == $course['creatorId'];
@@ -201,10 +209,10 @@
       <div class="row">
         <?php
           if (!empty($assignments)) {
-            foreach($assignments as $assignment) {
+            foreach($assignments as $key=>$assignment) {
         ?>
         <div class="col-12">
-        <div class="card assignment-item" data-toggle="modal" data-target="#assignmentModal<?= $assignment['id'] ?>">
+        <div class="card assignment-item" data-toggle="modal" data-target="#assignmentModal<?= $key ?>">
           <div class="card-body">
             <h5 class="card-title"><?= $assignment['title'] ?></h5>
             <h6 class="card-subtitle mb-3">
@@ -224,9 +232,9 @@
           </div>
         </div>
         </div>
-        <div class="modal fade" id="assignmentModal<?= $assignment['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="assignmentModal<?= $key ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
+            <form class="modal-content" action="./submitAsn.php?id=<?= $key ?>" method="POST" enctype="multipart/form-data">
               <div class="modal-header">
                 <h4 class="modal-title" id="exampleModalLabel"><?= $assignment['title'] ?></h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -242,7 +250,7 @@
                   ?>
                   <h6>Upload assignment as a document. <p class="text-muted small">Supported types are .docx, .ppt, .txt & .pdf</p></h6>
                   <div class="file-input">
-                    <input type="file" id="file<?= $assignment['id'] ?>" class="file" accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, image/">
+                    <input name="assignmentFile" type="file" id="file<?= $assignment['id'] ?>" class="file" accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, image/">
                     <label class="btn btn-primary" for="file<?= $assignment['id'] ?>">Select file</label>
                     <p class="file-name"></p>
                   </div>
@@ -251,7 +259,7 @@
                   ?>
                   <div class="form-group">
                     <label class="h6" for="codeTextArea<?= $assignment['id'] ?>">Paste your code in the following textbox.</label>
-                    <textarea class="form-control" id="codeTextArea<?= $assignment['id'] ?>" rows="10"></textarea>
+                    <textarea name="assignmentCode" class="form-control" id="codeTextArea<?= $assignment['id'] ?>" rows="10"></textarea>
                   </div>
                   <?php
                   }
@@ -268,9 +276,9 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Submit assignment</button>
+                <button type="submit" class="btn btn-primary">Submit assignment</button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
         <?php
