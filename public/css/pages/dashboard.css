@@ -1,5 +1,4 @@
 .enrolled-created-courses-headings {
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   margin: 1rem 0rem;
 }
 
@@ -14,7 +13,6 @@
   flex:29.3%;
   margin:2%;
   max-width:29.3%;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   border:1px solid #ccc;
   border-radius:10px;
   transition:all 200ms;
@@ -38,7 +36,6 @@
 
 .courses-head h4 {
   color:#007bff;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .courses-desc {
