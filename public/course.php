@@ -248,7 +248,7 @@
             <h5 class="card-title"><?= $assignment['title'] ?></h5>
             <p class="lead">
             <?php 
-              if (isset($assignment['submission'])) {
+              if (!$createdCourse && isset($assignment['submission'])) {
                 echo '✅';
               }
             ?>
@@ -283,6 +283,7 @@
               </div>
               <div class="modal-body">
                 <?php
+                if (!$createdCourse) {
                 if (isset($assignment['submission'])) {
                   ?>
                   <p class="lead small">
@@ -332,10 +333,23 @@
                     <?= 'Created on: '.date("H:i A d F, Y", strtotime($assignment['creationTime'])) ?>
                   </span>
                 </p>
+                <?php
+                } else {
+                ?>
+
+                <p class="lead text-muted">Check student assignments</p>
+                <?php  
+                  $uploadedFile = $assignment['submission']['file_name'];
+                  $ext = pathinfo($uploadedFile, PATHINFO_EXTENSION);
+                  echo $ext;
+                }
+                ?>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <?php if (!$createdCourse) { ?>
                 <button type="submit" class="btn btn-primary">Submit assignment</button>
+                <?php } ?>
               </div>
             </form>
           </div>
