@@ -23,11 +23,32 @@ function read_file_docx($filename){
 
 function read_file_pdf($filename) {
   $parser = new Smalot\PdfParser\Parser();
-  $pdf    = $parser->parseFile('test.pdf');  
+  $pdf    = $parser->parseFile($filename);
   $text = $pdf->getText();
   return $text;
 }
-
+function fileExtension($s) {
+  $n = strrpos($s,".");
+  return ($n===false) ? "" : substr($s,$n+1);
+}
+function read_file($filepath) {
+  $fileExt = fileExtension(explode('/', $filepath)[1]);
+  if ($fileExt == 'docx') {
+    $content = read_file_docx($filepath);
+    if ($content !== false) {
+      return $content;
+    }
+  } else {
+    $content =  read_file_pdf($filepath);
+    if ($content !== false) {
+      return $content;
+    }
+  }
+  return "";
+  // return read_file_pdf('uploads/deep.pdf');
+}
+// $content = read_file_pdf('test.pdf');
+// var_dump($content);
 // $filename = "test.docx";// or /var/www/html/file.docx  
 // $content = read_file_docx($filename);  
 // if($content !== false) {  
@@ -37,7 +58,7 @@ function read_file_pdf($filename) {
 //   echo 'Couldn\'t the file. Please check that file.';  
 // }
 
-$filename = "test.pdf";
-$content = read_file_pdf($filename);
+// $filename = "test.pdf";
+// $content = read_file_pdf($filename);
 ?>  
 

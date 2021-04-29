@@ -1,6 +1,7 @@
 <?php
-  ini_set('display_errors', true);
-  error_reporting(E_ALL ^ E_NOTICE);
+  // ini_set('display_errors', true);
+  // error_reporting(E_ALL ^ E_NOTICE);
+
   session_start();
   // Check if user is already logged in
   if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] === false) {
@@ -13,6 +14,12 @@
   $name = $_SESSION["name"];
   $course = [];
   $assignments = [];
+  $max_assignments = 10;
+  $set = [];
+
+  function get_submission($assignmentId, $userId) {
+    return $set[$assignmentId][$userId];
+  }
 
   if ($_SERVER['REQUEST_METHOD'] == "POST") {
     
@@ -89,29 +96,36 @@
         }
       }
     }
-    $assignmentIds = [$_SESSION['id']];
+    $assignmentIds = [];
     foreach ($assignments as $assignment) {
       array_push($assignmentIds, $assignment['id']);
     }
     // echo '<pre>';
     // var_dump($assignmentIds);
-    $in = str_repeat('?,', count($assignmentIds) - 2) . '?'; // placeholders
+    $in = str_repeat('?,', count($assignmentIds) - 1) . '?'; // placeholders
+    // var_dump($in);
     // $sql = "SELECT * FROM `submission` WHERE (userId = ? AND assignmentId IN ($in)) ORDER BY submissionTime DESC";
-    $sql = "SELECT * FROM (`submission` LEFT JOIN `assignments` ON submission.assignmentId = assignments.assignmentId) WHERE (userId = ? AND submission.assignmentId IN (?)) ORDER BY creationTime DESC";
+    // $sql = "SELECT * FROM (`submission` LEFT JOIN `assignments` ON submission.assignmentId = assignments.assignmentId) WHERE (submission.assignmentId IN (?)) ORDER BY creationTime DESC";
+    $sql = "SELECT * FROM ((`submission` LEFT JOIN `assignments` ON submission.assignmentId = assignments.assignmentId) INNER JOIN `users` ON users.id = submission.userId) WHERE (submission.assignmentId IN ($in)) ORDER BY submissionTime DESC";
     // var_dump($sql);
     if ($stmt = $mysqli->prepare($sql)) {
       $types = str_repeat('i', count($assignmentIds)); //types
+      // var_dump($types);
+      // var_dump($assignmentIds);
       if ($stmt->bind_param($types, ...$assignmentIds)) {
         // echo 'binded';
         $stmt->execute();
         $result = $stmt->get_result(); // get the mysqli result
         $data = $result->fetch_all(MYSQLI_ASSOC); // fetch the data 
+        // echo '<pre>';
+        // var_dump($data);
+        // echo '</pre>';
         if (count($data) > 0) {
           $i = 0; $j = 0;
           
           for ($i=0; $i<count($assignments); $i++) {
             for ($j=0; $j<count($data); $j++) {
-              if ($data[$j]['assignmentId'] == $assignments[$i]['id']) {
+              if ($data[$j]['assignmentId'] == $assignments[$i]['id'] && $data[$j]['userId'] == $id) {
                 $assignments[$i]['submission'] = $data[$j];
                 break;
               }
@@ -120,7 +134,23 @@
           // echo '<pre>';
           // var_dump($assignments);
           // echo '</pre>';
+
+          $exists = [];
+          for ($i=0; $i<count($data); $i++) {
+            if (!isset($set[$data[$i]['assignmentId']][$data[$i]['userId']])) {
+              $set[$data[$i]['assignmentId']][$data[$i]['userId']] = $data[$i];
+            }
+
+          }
+          // echo '<pre>';
+          // var_dump($set);
+          // echo '</pre>';
+
+
         }
+
+        
+
       } else {
         echo $mysqli->error;
       }
@@ -291,7 +321,7 @@
                   </p>
                   <p class="lead">
                   <h5 class="mt-0">Attachment</h5>
-                  <div class="card attachment-card">
+                  <div class="card attachment-card pointer">
                     <div class="card-body">
                       <h6 class="card-title mt-0 mb-0"><?= explode('/', $assignment['submission']['file_name'])[1] ?></h6>
                       <a href="<?= $assignment['submission']['file_name'] ?>" class="stretched-link">Download</a>
@@ -333,17 +363,44 @@
                     <?= 'Created on: '.date("H:i A d F, Y", strtotime($assignment['creationTime'])) ?>
                   </span>
                 </p>
+                
                 <?php
                 } else {
+                  $submissions = $set[$assignment['id']];
+                ?>
+                <p class="lead text-muted">Check student assignments</p>
+                <?php
+                  
+                  // echo '<pre>';
+                  // var_dump($submissions);
+                  // echo '</pre>';
+                  foreach ($submissions as $submission) {
                 ?>
 
-                <p class="lead text-muted">Check student assignments</p>
-                <?php  
-                  $uploadedFile = $assignment['submission']['file_name'];
-                  $ext = pathinfo($uploadedFile, PATHINFO_EXTENSION);
-                  echo $ext;
+                <?php 
+                  $uploadedFile = explode('/', $submission['file_name'])[1];
+                ?>
+                  <div class="card attachment-card mb-2">
+                    <div class="card-body">
+                      <h5 class="card-title mb-2"><?= $submission['name'] ?></h5>
+                      <h6 class="card-subtitle mb-1"><?= $uploadedFile ?></h6>
+                      <a href="<?= $submission['file_name'] ?>" class="btn btn-secondary mt-1">Download</a>
+
+                    </div>
+                    
+                  </div>
+                <?php
+                  }
                 }
                 ?>
+                <p class="text-muted small">
+                  <span class="text-danger">
+                    <?= 'Due on: '.date("H:i A d F, Y", strtotime($assignment['dueTime'])) ?><br />
+                  </span>
+                  <span class="text-primary">
+                    <?= 'Created on: '.date("H:i A d F, Y", strtotime($assignment['creationTime'])) ?>
+                  </span>
+                </p>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

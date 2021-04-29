@@ -16,8 +16,10 @@
   height: 0.1px;
   position: absolute;
 }
-.attachment-card {
+.pointer {
   cursor: pointer;
+}
+.attachment-card {
   box-shadow: 0px 0px 0.1rem rgba(0, 0, 0, 0.1);
 }
 .attachment-card:hover,

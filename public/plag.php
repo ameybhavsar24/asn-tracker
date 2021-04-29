@@ -1,38 +1,40 @@
 <?php
-  ini_set('display_errors', true);
-  error_reporting(E_ALL ^ E_NOTICE);
-  echo '<h1>Checking for plagiarism ... </h1><pre>';
+function ncd($x, $y) { 
+  $cx = strlen(gzcompress($x));
+  $cy = strlen(gzcompress($y));
+  return (strlen(gzcompress($x . $y)) - min($cx, $cy)) / max($cx, $cy);
+}   
+function similar_NCD_gzip($sx, $sy, $prec=0, $MAXLEN=90000) {
+    # NCD with gzip artifact correctoin and percentual return.
+    # sx,sy = strings to compare. 
+    # Use $prec=-1 for result range [0-1], $pres=0 for percentual,
+    #     $pres=1 or =2,3... for better precision (not a reliable)  
+    # Use MAXLEN=-1 or a aprox. compress lenght. 
+    # For NCD definition see http://arxiv.org/abs/0809.2553
+    # (c) Krauss (2010).
+      $x = $min = strlen(gzcompress($sx));
+      $y = $max = strlen(gzcompress($sy));
+      $xy= strlen(gzcompress($sx.$sy));
+      $a = $sx;
+      if ($x>$y) { # swap min/max
+        $min = $y;
+        $max = $x;
+        $a = $sy;
+      }
+      $res = ($xy-$min)/$max; # NCD definition.
+      
+      # Optional correction (for little strings):
+      if ($MAXLEN<0 || $xy<$MAXLEN) {
+        $aa= strlen(gzcompress($a.$a));
+        $ref = ($aa-$min)/$min;
+        $res = $res - $ref; # correction
+      }
+      return ($prec<0)? $res: 100*round($res,2+$prec);
+    }    
+print(ncd('this is a test', 'this was a test') . '<br/>');
+print(similar_NCD_gzip('this is a test', 'this was a test') . '<br/><br/>');
 
-  include ('plagcheck/autoload.php');
-  include ('requests/library/Requests.php');
-  Requests::register_autoloader();
-
-  print_r(get_declared_classes());
-  $copyleaks = new Copyleaks\Copyleaks();
-  $loginResult = $copyleaks->login('iamamey24@gmail.com', '8771d757-9742-45d7-b069-4ab25b9901f3');
-  // var_dump($loginResult);
-
-  $accessToken = $loginResult->accessToken;
-  var_dump($accessToken);
-
-  $headers = array(
-  	'Content-type' => 'application/json',
-  	'Authorization' => 'Bearer ' . $accessToken
-  );
-  $customId = rand(10, 1000);
-  echo $customId;
-  $data = '{
-    "base64": "SGVsbG8gd29ybGQh",
-    "filename": "file.txt",
-    "properties": {
-      "webhooks": {
-        "status": "http://asn-tracker0.loca.lt/asn/api/completed.php"
-      },
-      "sandbox": true
-    }
-  }';
-  var_dump($data);
-  $response = Requests::put('https://api.copyleaks.com/v3/education/submit/file/test1', $headers, $data);
-  var_dump($response);
+print(ncd('this is a test', 'thdsiss tdext isdsss compdletely different') . '<br/>');
+print(similar_NCD_gzip('this is a test', 'this text is completely different'));
 
 ?>
