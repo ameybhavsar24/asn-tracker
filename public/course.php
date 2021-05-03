@@ -1,6 +1,6 @@
 <?php
-  // ini_set('display_errors', true);
-  // error_reporting(E_ALL ^ E_NOTICE);
+  ini_set('display_errors', true);
+  error_reporting(E_ALL ^ E_NOTICE);
 
   session_start();
   // Check if user is already logged in
@@ -79,7 +79,7 @@
         $stmt->store_result();
         $result = $stmt->get_result();
         if ($stmt->num_rows > 0) {
-          $stmt->bind_result($assignmentId, $assignmentTitle, $assignmentDescription, $assignmentCourseId, $assignmentCreationTime, $assignmentDueTime, $assignmentType);
+          $stmt->bind_result($assignmentId, $assignmentTitle, $assignmentDescription, $assignmentCourseId, $assignmentCreationTime, $assignmentDueTime, $assignmentType, $maxMarks);
           while ($stmt->fetch()) {
             $new_assignment = array (
               'id' => $assignmentId,
@@ -96,12 +96,14 @@
         }
       }
     }
+    // echo '<pre>';
+    // var_dump($_SESSION['assignments']);
+    // echo '</pre>';
     $assignmentIds = [];
     foreach ($assignments as $assignment) {
       array_push($assignmentIds, $assignment['id']);
     }
-    // echo '<pre>';
-    // var_dump($assignmentIds);
+    if (count($assignmentIds) > 0) {
     $in = str_repeat('?,', count($assignmentIds) - 1) . '?'; // placeholders
     // var_dump($in);
     // $sql = "SELECT * FROM `submission` WHERE (userId = ? AND assignmentId IN ($in)) ORDER BY submissionTime DESC";
@@ -157,6 +159,7 @@
     } else {
       echo 'Failed to prepare' . $mysqli->error;
     }
+  }
 
   }
   $course = $_SESSION['curr_course'];
@@ -366,7 +369,11 @@
                 
                 <?php
                 } else {
-                  $submissions = $set[$assignment['id']];
+                  $submissions = [];
+                  if (!empty($set)) {
+                    $submissions = $set[$assignment['id']];
+                  }
+
                 ?>
                 <p class="lead text-muted">Check student assignments</p>
                 <?php
@@ -374,6 +381,7 @@
                   // echo '<pre>';
                   // var_dump($submissions);
                   // echo '</pre>';
+
                   foreach ($submissions as $submission) {
                 ?>
 
