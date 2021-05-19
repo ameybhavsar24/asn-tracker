@@ -30,7 +30,7 @@ if(isset($_POST["submit"])) {
 // }
 
 // Check file size
-if ($_FILES["assignmentFile"]["size"] > 500000) {
+if ($_FILES["assignmentFile"]["size"] > 10485760) {
   echo "Sorry, your file is too large.";
   $uploadOk = 0;
 }
@@ -56,7 +56,9 @@ if ($uploadOk == 0) {
         $stmt->bind_param("iis", $_SESSION['assignments'][(int)$_GET['id']]['id'], $_SESSION['id'], $target_file);
         
         if ($stmt->execute()) {
-            // header('location: course.php');1
+            header("location: course.php?uploaded=1&courseId=".$_POST['courseId']);
+            exit;
+            // echo "location: course.php?courseId=".$_POST['courseId'];
             echo 'Inserted submission';            
         } else {
             echo 'Failed to submit.' . $mysqli->error;
@@ -68,4 +70,7 @@ if ($uploadOk == 0) {
     echo "Sorry, there was an error uploading your file.";
   }
 }
+
+header("location: course.php?uploaded=0&courseId=".$_POST['courseId']);
+
 ?>

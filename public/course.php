@@ -343,6 +343,7 @@
                   ?>
                   <h6>Upload assignment as a document. <p class="text-muted small">Supported types are .docx, .ppt, .txt & .pdf</p></h6>
                   <div class="file-input">
+                  	<input type="hidden" name="courseId" value=<?= $course['id'] ?> />
                     <input name="assignmentFile" type="file" id="file<?= $assignment['id'] ?>" class="file" accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint, text/plain, application/pdf, image/">
                     <label class="btn btn-primary" for="file<?= $assignment['id'] ?>">Select file</label>
                     <p class="file-name"></p>
@@ -429,6 +430,21 @@
   </div>
   <?php
     include_once ('footer.php');
+
+	if ($_GET['uploaded'] == "1") {
+		?>
+		<script>
+			alert("Uploaded assignment file successfully");
+		</script>
+		<?php
+	} elseif ($_GET['uploaded'] == "0") {
+		?>
+		<script>
+			alert("Uploading assignment file failed. File should be less than 10MB.");
+		</script>
+		<?php		
+	}
+    
   ?>
 
   <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
